@@ -12,23 +12,29 @@ class Setup extends React.Component {
       players: [],
     };
 
-    this.setPlayers = this.setPlayers.bind(this);
+    this.submitPlayers = this.submitPlayers.bind(this);
+    this.submitRoles = this.submitRoles.bind(this);
   }
 
-  setPlayers(players) {
+  submitPlayers(players) {
     this.setState({
       players: players,
       stage: 1,
     });
   }
 
+  submitRoles(roles) {
+    this.props.onStart(this.state.players, roles);
+  }
+
   render() {
     switch (this.state.stage) {
       case 0:
-        return <AddPlayer onSubmit={this.setPlayers} />;
+        return <AddPlayer onSubmit={this.submitPlayers} />;
         break;
       case 1:
-        return <ChooseRoles players={this.state.players} />;
+        return <ChooseRoles onSubmit={this.submitRoles}
+          players={this.state.players} />;
         break;
     }
   }

@@ -29,50 +29,43 @@ class ChooseRoles extends React.Component {
     this.setState({selected: newSelected});
   }
 
-  countSelection(name) {
-    if (this.state.selected[name]) {
-      return false;
-    }
-
+  countSelection() {
     const values = Object.values(this.state.selected);
     let count = 0;
 
     for (let i = 0; i < values.length; i++) {
-      if (values[i]) {
-        count++;
-        if (count >= this.props.players.length) {
-          return true;
-        }
-      }
+      count += values[i];
     }
 
-    return false;
+    return count;
   }
 
   startGame() {
+    const roles = Object.keys(this.state.selected)
+      .filter((e) => this.state.selected[e])
+
+    this.props.onSubmit(roles);
   }
 
   render() {
-    let display = [];
+    let display = [<div>{this.props.players.length} players</div>];
 
     const roleList = roles.map((e, i) => (
       <div key={i}>
         <label for={e.name}>{e.name}</label><br />
         <input type="radio" id={e.name} onClick={this.onSelect} 
           onChange={this.onSelect} checked={this.state.selected[e.name]} 
-          disabled={this.countSelection(e.name)} />
+          disabled={this.state.selected[e.name] ? false :
+            (this.countSelection() >= this.props.players.length)} />
       </div>
     ));
 
     display.push(
       <form onSubmit={this.startGame}>
         {roleList}
-        <input type="submit" value="Start Game" />
+        <input type="submit" value="Start Game"
+          disabled={!this.countSelection()} />
       </form>
-    );
-
-    display.push(
-      <div>{this.props.players}</div>
     );
 
     return display;

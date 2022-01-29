@@ -11,7 +11,6 @@ class AddPlayer extends React.Component {
 
     this.handleClick = this.handleClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    // this.props.onSubmit(players);
   }
 
   handleClick() {
@@ -45,11 +44,10 @@ class AddPlayer extends React.Component {
         </form>
       );
     }
-    /*<div>
-        {this.state.addingPlayer ?
-          <AddPlayer onSubmit={this.playerSubmit} /> : null}*/
+
     display.push(
-      <button onClick={() => this.props.onSubmit(this.state.players)}>
+      <button onClick={() => this.props.onSubmit(this.state.players)}
+        disabled={!this.state.players.length}>
         Choose Roles
       </button>
     );
