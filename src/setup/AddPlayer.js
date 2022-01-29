@@ -49,7 +49,9 @@ class AddPlayer extends React.Component {
         {this.state.addingPlayer ?
           <AddPlayer onSubmit={this.playerSubmit} /> : null}*/
     display.push(
-      <button onClick={() => this.props.onSubmit(this.state.players)}>Start Game</button>
+      <button onClick={() => this.props.onSubmit(this.state.players)}>
+        Choose Roles
+      </button>
     );
 
     return display;

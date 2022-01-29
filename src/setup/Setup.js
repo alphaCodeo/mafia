@@ -28,7 +28,7 @@ class Setup extends React.Component {
         return <AddPlayer onSubmit={this.setPlayers} />;
         break;
       case 1:
-        return <ChooseRoles />;
+        return <ChooseRoles players={this.state.players} />;
         break;
     }
   }
