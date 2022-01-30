@@ -1,4 +1,5 @@
 import React from 'react';
+
 import AddPlayer from './AddPlayer';
 import ChooseRoles from './ChooseRoles';
 
@@ -30,12 +31,14 @@ class Setup extends React.Component {
   render() {
     switch (this.state.stage) {
       case 0:
-        return <AddPlayer onSubmit={this.submitPlayers} />;
-        break;
+        return (
+          <AddPlayer onSubmit={this.submitPlayers} />
+        );
       case 1:
-        return <ChooseRoles onSubmit={this.submitRoles}
-          players={this.state.players} />;
-        break;
+        return (
+          <ChooseRoles onSubmit={this.submitRoles}
+            players={this.state.players} />
+        );
     }
   }
 }

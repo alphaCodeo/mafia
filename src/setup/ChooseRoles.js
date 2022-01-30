@@ -1,14 +1,18 @@
 import React from 'react';
-import roles from './roles.json';
+
+import Roles from '../Roles';
 
 class ChooseRoles extends React.Component {
   constructor(props) {
     super(props);
 
+
+    this.roleNames = [];
     let selected = {};
 
-    for (let i = 0; i < roles.length; i++) {
-      selected[roles[i].name] = false;
+    for (const i in Roles) {
+      this.roleNames.push(Roles[i].name);
+      selected[Roles[i].name] = false;
     }
 
     this.state = {
@@ -16,7 +20,7 @@ class ChooseRoles extends React.Component {
     };
 
     this.onSelect = this.onSelect.bind(this);
-    this.countSelection = this.countSelection .bind(this);
+    this.countSelection = this.countSelection.bind(this);
     this.startGame = this.startGame.bind(this);
   }
 
@@ -41,21 +45,21 @@ class ChooseRoles extends React.Component {
   }
 
   startGame() {
-    const roles = Object.keys(this.state.selected)
+    const roleList = Object.keys(this.state.selected)
       .filter((e) => this.state.selected[e])
 
-    this.props.onSubmit(roles);
+    this.props.onSubmit(roleList);
   }
 
   render() {
     let display = [<div>{this.props.players.length} players</div>];
 
-    const roleList = roles.map((e, i) => (
+    const roleList = this.roleNames.map((name, i) => (
       <div key={i}>
-        <label for={e.name}>{e.name}</label><br />
-        <input type="radio" id={e.name} onClick={this.onSelect} 
-          onChange={this.onSelect} checked={this.state.selected[e.name]} 
-          disabled={this.state.selected[e.name] ? false :
+        <label for={name}>{name}</label><br />
+        <input type="radio" id={name} onClick={this.onSelect} 
+          onChange={this.onSelect} checked={this.state.selected[name]} 
+          disabled={this.state.selected[name] ? false :
             (this.countSelection() >= this.props.players.length)} />
       </div>
     ));
