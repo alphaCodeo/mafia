@@ -6,7 +6,6 @@ class ChooseRoles extends React.Component {
   constructor(props) {
     super(props);
 
-
     this.roleNames = [];
     let selected = {};
 

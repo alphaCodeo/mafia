@@ -1,12 +1,12 @@
 import React from 'react';
 
 import Roles from '../Roles';
-import Player from './Player';
+import Player from '../Player';
 
 type Props = {
   onFinish: (players?: Player[]) => void;
   players: Player[];
-  index: number;
+  playerIndex: number;
 };
 
 type State = { };
@@ -22,7 +22,7 @@ class RoleAction extends React.Component<Props, State> {
 
   onFinish() {
     let form = [];
-    const currPlayer: Player = this.props.players[this.props.index];
+    const currPlayer: Player = this.props.players[this.props.playerIndex];
     const action: Player[] | undefined
       = Roles[currPlayer.role].action(this.props.players, () => 1);
 
@@ -45,7 +45,7 @@ class RoleAction extends React.Component<Props, State> {
   }
 
   render() {
-    const currPlayer: Player = this.props.players[this.props.index];
+    const currPlayer: Player = this.props.players[this.props.playerIndex];
 
     return (
       <>

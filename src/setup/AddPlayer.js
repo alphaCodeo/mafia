@@ -37,7 +37,7 @@ class AddPlayer extends React.Component {
     }
 
     return (
-      <div className='text-center'>
+      <div className='container text-center'>
         <button className='btn btn-primary btn-lg'
           onClick={this.handleClick}>
           Add Player
