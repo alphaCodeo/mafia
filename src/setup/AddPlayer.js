@@ -21,38 +21,52 @@ class AddPlayer extends React.Component {
     this.setState({
       adding: false,
       players: [...this.state.players,
-      event.target.elements.name.value],
+      event.target.elements.playerName.value],
     });
     event.preventDefault();
   }
 
   render() {
-    let display = [
-      <button id='addPlayer'
-        onClick={this.handleClick}>
-        Add Player
-      </button>,
-      <div>{this.state.players.length} players:</div>,
-      <div>{this.state.players}</div>,
-    ];
-
-    if (this.state.adding) {
-      display.push(
-        <form onSubmit={this.handleSubmit}>
-          <input name='name' placeholder='Player name' />
-          <input type='submit' className='submit-button' value='Add' />
-        </form>
+    let players = [];
+    for (let i = 0; i < this.state.players.length; i++) {
+      players.push(
+        <div className='list-group-item' key={'player' + i}>
+          {this.state.players[i]}
+        </div>
       );
     }
 
-    display.push(
-      <button onClick={() => this.props.onSubmit(this.state.players)}
-        disabled={!this.state.players.length}>
-        Choose Roles
-      </button>
-    );
+    return (
+      <div className='text-center'>
+        <button className='btn btn-primary btn-lg'
+          onClick={this.handleClick}>
+          Add Player
+        </button>
 
-    return display;
+        <div>
+          {this.state.players.length} players:
+        </div>
+        <div className='list-group list-group-horizontal justify-content-center'>
+          {players}
+        </div>
+
+        {this.state.adding ?
+          <form onSubmit={this.handleSubmit}>
+            <input name='playerName' className='form-control' type='text'
+              placeholder='Player name' />
+
+            <button className='btn btn-primary' type='submit'>
+              Add
+            </button>
+          </form> : null}
+
+        <button className='btn btn-primary btn-lg'
+          onClick={() => this.props.onSubmit(this.state.players)}
+          disabled={!this.state.players.length}>
+          Choose Roles
+        </button>
+      </div>
+    );
   }
 }
 

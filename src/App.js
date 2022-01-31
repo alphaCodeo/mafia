@@ -28,7 +28,7 @@ class App extends React.Component {
 
   render() {
     return <Game players={['1', '2']} roles={['Villager', 'Mafioso']} />;
-    return <Game players={[...Array(Object.keys(Roles).length).keys()]} roles={Object.keys(Roles)} />;
+    //return <Game players={[...Array(Object.keys(Roles).length).keys()]} roles={Object.keys(Roles)} />;
     switch (this.state.stage) {
       case 0:
         return (
@@ -38,6 +38,8 @@ class App extends React.Component {
         return (
           <Game players={this.state.players} roles={this.state.roles} />
         );
+      default:
+        break;
     }
   }
 }

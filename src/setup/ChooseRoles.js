@@ -52,50 +52,40 @@ class ChooseRoles extends React.Component {
   }
 
   render() {
-    let display = [<div>{this.props.players.length} players</div>];
-
     const roleList = this.roleNames.map((name, i) => (
-      <div key={i}>
-        <label for={name}>{name}</label><br />
-        <input type="radio" id={name} onClick={this.onSelect} 
-          onChange={this.onSelect} checked={this.state.selected[name]} 
-          disabled={this.state.selected[name] ? false :
-            (this.countSelection() >= this.props.players.length)} />
+      <div className='card' key={'card' + i}>
+        <div className='card-body form-check' key={'form' + i}>
+          <label htmlFor={name} className='form-check-label card-title'
+            key={'label' + i}>
+            {name}
+          </label>
+          <input id={name} className='form-check-input card-text'
+            type='checkbox' key={'input' + i}
+            onClick={this.onSelect} onChange={this.onSelect}
+            checked={this.state.selected[name]} 
+            disabled={this.state.selected[name] ? false
+            : (this.countSelection() >= this.props.players.length)} />
+        </div>
       </div>
     ));
 
-    display.push(
-      <form onSubmit={this.startGame}>
-        {roleList}
-        <input type="submit" value="Start Game"
-          disabled={!this.countSelection()} />
-      </form>
-    );
+    return (
+      <div className='container'>
+        <div>
+          {this.props.players.length} players
+        </div>
 
-    return display;
+        <form className='form-check' onSubmit={this.startGame}>
+          {roleList}
+
+          <button className='btn btn-primary btn-lg' type='submit'
+            disabled={!this.countSelection()}>
+            Start Game
+          </button>
+        </form>
+      </div>
+    );
   }
 }
-
-/* Prosecutor (Town)
-
-Defense Attorney (Town)
-
-Good King (Town)
-You are the King
-
-Evil King (uh…not town?)
-
-Suspicious
-
-Not Suspicious
-
-You were roleblocked!
-
-Your target is Immume
-You have received a Vest from the Armourer
-
-You have been blackmailed! You will be unable to talk for the next day
-
-You can’t see your target with all this fog in their house! */
 
 export default ChooseRoles;

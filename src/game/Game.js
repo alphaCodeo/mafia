@@ -35,6 +35,8 @@ class Game extends React.Component {
           <Night players={this.props.players}
             roles={this.state.roles} />
         );
+      default:
+        break;
     }
   }
 }

@@ -27,12 +27,20 @@ class AssignRoles extends React.Component {
     const i = this.state.index;
 
     return (
-      <div>
-        <div>{this.props.players[i]}:</div>
-        <div>You are the {this.state.roles[i]}.</div>
-        <div>{Roles[this.state.roles[i]].description}</div>
+      <div className='container'>
+        <div>
+          {this.props.players[i]}:
+        </div>
+        <div>
+          You are the {this.state.roles[i]}.
+        </div>
+        <div>
+          {Roles[this.state.roles[i]].description}
+        </div>
 
-        <button onClick={this.nextPlayer}>Next Player</button>
+        <button className='btn btn-primary btn-lg' onClick={this.nextPlayer}>
+          Next Player
+        </button>
       </div>
     );
   }

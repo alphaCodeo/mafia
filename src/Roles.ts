@@ -1,28 +1,45 @@
+import Player from './game/Player';
+
+type Action = {
+  label: string;
+  action: (players: Player[], victim: number) => Player[] | void;
+};
+
 interface Role {
   name: string;
   description: string;
   affiliation: string;
+  role?: string;
+  actions: Action[];
+  //action: (players: Player[], getChoice: () => number)
+    //=> Player[] | void;
 }
 
-interface Killing extends Role {
-  action: (state: Object, getChoice: () => string) => Object;
-}
-
-interface Investigative extends Role {
-  action: (state: Object, getChoice: () => string) => Object;
-}
-
-interface Protective extends Role {
-  action: (state: Object, getChoice: () => string) => Object;
-}
-
-interface Support extends Role { }
-
-const Roles = {
+const Roles: any = {
   Villager: {
     name: 'Villager',
     description: 'You are a regular Villager. You don’t have any special actions.',
     affiliation: 'Town',
+    /*actions: [
+      { label: 'You have no actions to do.',
+        action: (players) => {}, } as Action,
+    ],*/
+  } as Role,
+
+  Mafioso: {
+    name: 'Mafioso',
+    description: 'Each night you may vote alongside the rest of the mafia on who to kill.',
+    affiliation: 'Mafia',
+    /*action: (players, getChoice) => {
+      // TODO: deep copy?
+      let newPlayers: Player[] = players.slice();
+      newPlayers[getChoice()].alive = false;
+      return newPlayers;
+    },
+    actions: [
+      // choose player
+      // kill
+    ],*/
   } as Role,
 
   Sheriff: {
@@ -73,13 +90,6 @@ const Roles = {
     affiliation: 'Town',
   } as Role,
 
-  Mafioso: {
-    name: 'Mafioso',
-    description: 'Each night you may vote alongside the rest of the mafia on who to kill.',
-    affiliation: 'Mafia',
-    action: (players: string[], roles: string[]) => {},
-  } as Role,
-
   Framer: {
     name: 'Framer',
     description: 'Each night you may pick someone to frame, if the target picked is investigated, they will show up to be suspicious. If you instead pick a fellow Mafia, they will show up as not suspicious when investigated.',
@@ -127,11 +137,7 @@ const Roles = {
     description: 'Each night, pick someone to kill. (You cannot be killed at night) (If you are roleblocked by the Escort or Consort you will kill them instead).',
     affiliation: 'Neutral',
     role: 'Killing',
-    action: (state: Object,
-             getChoice: () => string) => {
-              return 1;
-             },
-  } as Killing,
+  } as Role,
 
   Executioner: {
     name: 'Executioner',
@@ -216,14 +222,14 @@ const Roles = {
     description: 'Pick two people each night (You may pick yourself). You swap places for that night. You cannot be roleblocked.',
     affiliation: 'Town',
     role: 'Support',
-  } as Support,
+  } as Role,
 
   Pacifist: {
     name: 'Pacifist',
     description: 'You may pick a person each night. Their vote will not count for the next day.',
     affiliation: 'Town',
     role: 'Support',
-  } as Support,
+  } as Role,
 
   Bodyguard: {
     name: 'Bodyguard',
@@ -257,7 +263,29 @@ const Roles = {
     description: 'Each night you may choose to fog a person’s house. Any person visiting them will be unable to perform their night action on that person.',
     affiliation: 'Mafia',
     role: 'Support',
-  } as Support,
+  } as Role,
 };
+
+/* Prosecutor (Town)
+
+Defense Attorney (Town)
+
+Good King (Town)
+You are the King
+
+Evil King (uh…not town?)
+
+Suspicious
+
+Not Suspicious
+
+You were roleblocked!
+
+Your target is Immume
+You have received a Vest from the Armourer
+
+You have been blackmailed! You will be unable to talk for the next day
+
+You can’t see your target with all this fog in their house! */
 
 export default Roles;

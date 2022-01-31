@@ -39,6 +39,8 @@ class Setup extends React.Component {
           <ChooseRoles onSubmit={this.submitRoles}
             players={this.state.players} />
         );
+      default:
+        break;
     }
   }
 }
