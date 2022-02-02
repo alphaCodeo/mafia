@@ -21,8 +21,9 @@ class AddPlayer extends React.Component {
     this.setState({
       adding: false,
       players: [...this.state.players,
-      event.target.elements.playerName.value],
+        event.target.elements.playerName.value],
     });
+
     event.preventDefault();
   }
 
@@ -52,7 +53,7 @@ class AddPlayer extends React.Component {
 
         {this.state.adding ?
           <form onSubmit={this.handleSubmit}>
-            <input name='playerName' className='form-control' type='text'
+            <input id='playerName' className='form-control' type='text'
               placeholder='Player name' />
 
             <button className='btn btn-primary' type='submit'>

@@ -55,13 +55,14 @@ class Setup extends React.Component<Props, State> {
       return (
         <AddPlayer onSubmit={this.submitPlayers} />
         );
+
       case 1:
       return (
         <ChooseRoles onSubmit={this.submitRoles}
           players={this.state.players} />
         );
-      default:
-      break;
+
+      default: break;
     }
   }
 }

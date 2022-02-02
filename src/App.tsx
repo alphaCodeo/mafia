@@ -3,7 +3,6 @@ import React from 'react';
 import Setup from './setup/Setup';
 import Game from './game/Game';
 
-import Roles from './Roles';
 import Player from './Player';
 
 type Props = {};
@@ -47,12 +46,13 @@ class App extends React.Component<Props, State> {
       return (
         <Setup onStart={this.startGame} />
         );
+
       case 1:
       return (
         <Game players={this.state.players} />
         );
-      default:
-      break;
+
+      default: break;
     }
   }
 }

@@ -28,8 +28,7 @@ class Game extends React.Component<Props, State> {
     };
 
     this.onReady = this.onReady.bind(this);
-    this.onFinish = this.onFinish.bind(this);
-    this.nextPlayer = this.nextPlayer.bind(this);
+    this.onDone = this.onDone.bind(this);
   }
 
   onReady() {
@@ -41,41 +40,40 @@ class Game extends React.Component<Props, State> {
     this.setState({stage: 1});
   }
 
-  nextPlayer() {
+  onDone(players?: Player[]) {
+    let newIndex: number;
+
     if (this.state.playerIndex === this.state.players.length - 1) {
-      this.setState({
-        playerIndex: 0,
-        stage: 0,
-        night: this.state.night + 1,
-      });
-      return;
+      newIndex = 0;
+    } else{
+      newIndex = this.state.playerIndex + 1;
     }
 
-    this.setState({
-      playerIndex: this.state.playerIndex + 1,
-      stage: 0,
-    });
-  }
-
-  onFinish(players?: Player[]) {
     if (players === undefined) {
       this.setState({
-        playerIndex: this.state.playerIndex + 1,
+        playerIndex: newIndex,
         stage: 0,
+        night: newIndex ? this.state.night : this.state.night + 1,
       });
       return;
     }
 
     this.setState({
       players: players,
-      playerIndex: this.state.playerIndex + 1,
+      playerIndex: newIndex,
       stage: 0,
+      night: newIndex ? this.state.night : this.state.night + 1,
     });
   }
 
   render() {
     // TODO: shuffle order and implement role priorities
     const currPlayer: Player = this.state.players[this.state.playerIndex];
+
+    if (!currPlayer.alive) {
+      this.onDone();
+    }
+
     switch (this.state.stage) {
       case 0:
       return (
@@ -99,19 +97,18 @@ class Game extends React.Component<Props, State> {
           </div>
 
           <button className='btn btn-primary btn-lg'
-            onClick={this.nextPlayer}>Done</button>
+            onClick={() => {this.onDone()}}>Done</button>
         </div>
       );
 
       case 1:
       return (
-        <RoleAction onFinish={this.onFinish}
+        <RoleAction onDone={this.onDone}
           players={this.state.players}
           playerIndex={this.state.playerIndex} />
       );
 
-      default:
-      break;
+      default: break;
     }
   }
 }

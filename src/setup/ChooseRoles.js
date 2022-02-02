@@ -54,12 +54,12 @@ class ChooseRoles extends React.Component {
     const roleList = this.roleNames.map((name, i) => (
       <div className='card' key={'card' + i}>
         <div className='card-body form-check' key={'form' + i}>
-          <label htmlFor={name} className='form-check-label card-title'
+          <label className='form-check-label card-title' htmlFor={name}
             key={'label' + i}>
             {name}
           </label>
-          <input id={name} className='form-check-input card-text'
-            type='checkbox' key={'input' + i}
+          <input className='form-check-input card-text' type='checkbox'
+            id={name} key={'input' + i}
             onClick={this.onSelect} onChange={this.onSelect}
             checked={this.state.selected[name]} 
             disabled={this.state.selected[name] ? false

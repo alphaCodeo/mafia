@@ -1,18 +1,13 @@
 import Player from './Player';
-
-type Action = {
-  label: string;
-  action: (players: Player[], victim: number) => Player[] | void;
-};
+import Input from './Input';
 
 interface Role {
   name: string;
   description: string;
   affiliation: string;
   role?: string;
-  actions: Action[];
-  //action: (players: Player[], getChoice: () => number)
-    //=> Player[] | void;
+  input: Input[];
+  action: (players: Player[], input: number[]) => Player[] | void;
 }
 
 const Roles: any = {
@@ -20,26 +15,21 @@ const Roles: any = {
     name: 'Villager',
     description: 'You are a regular Villager. You don’t have any special actions.',
     affiliation: 'Town',
-    /*actions: [
-      { label: 'You have no actions to do.',
-        action: (players) => {}, } as Action,
-    ],*/
+    input: [],
+    action: (players: Player[], input: number[]) => {},
   } as Role,
 
   Mafioso: {
     name: 'Mafioso',
     description: 'Each night you may vote alongside the rest of the mafia on who to kill.',
     affiliation: 'Mafia',
-    /*action: (players, getChoice) => {
+    input: [Input.Player],
+    action: (players: Player[], input: number[]) => {
       // TODO: deep copy?
-      let newPlayers: Player[] = players.slice();
-      newPlayers[getChoice()].alive = false;
+      const newPlayers: Player[] = players.slice();
+      newPlayers[input[0]].alive = false;
       return newPlayers;
     },
-    actions: [
-      // choose player
-      // kill
-    ],*/
   } as Role,
 
   Sheriff: {
