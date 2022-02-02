@@ -51,31 +51,34 @@ class ChooseRoles extends React.Component {
   }
 
   render() {
+    // TODO: format buttons
     const roleList = this.roleNames.map((name, i) => (
-      <div className='card' key={'card' + i}>
-        <div className='card-body form-check' key={'form' + i}>
-          <label className='form-check-label card-title' htmlFor={name}
-            key={'label' + i}>
-            {name}
-          </label>
-          <input className='form-check-input card-text' type='checkbox'
-            id={name} key={'input' + i}
-            onClick={this.onSelect} onChange={this.onSelect}
-            checked={this.state.selected[name]} 
-            disabled={this.state.selected[name] ? false
-            : (this.countSelection() >= this.props.players.length)} />
-        </div>
+      <div class='col-3'>
+        <input className='btn-check' type='checkbox' id={name}
+          onClick={this.onSelect} onChange={this.onSelect}
+          key={'input' + i}
+          checked={this.state.selected[name]} 
+          disabled={this.state.selected[name] ? false
+          : (this.countSelection() >= this.props.players.length)} />
+
+        <label className='btn btn-outline-primary btn-block btn-lg'
+          htmlFor={name}
+          key={'label' + i}>
+          {name}
+        </label>
       </div>
     ));
 
     return (
       <div className='container'>
         <div>
-          {this.props.players.length} players
+          {this.props.players.length} players: {this.props.players.join(', ')}
         </div>
 
-        <form className='form-check' onSubmit={this.startGame}>
-          {roleList}
+        <form onSubmit={this.startGame}>
+          <div className='btn-group row'>
+            {roleList}
+          </div>
 
           <button className='btn btn-primary btn-lg' type='submit'
             disabled={!this.countSelection()}>

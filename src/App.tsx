@@ -32,7 +32,7 @@ class App extends React.Component<Props, State> {
   }
 
   render() {
-    return <Game players={[{
+    /*return <Game players={[{
       name: 'vil',
       role: 'Villager',
       alive: true,
@@ -40,7 +40,7 @@ class App extends React.Component<Props, State> {
       name: 'maf',
       role: 'Mafioso',
       alive: true,
-    } as Player]} />;
+    } as Player]} />;*/
     switch (this.state.stage) {
       case 0:
       return (

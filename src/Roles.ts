@@ -7,7 +7,7 @@ interface Role {
   affiliation: string;
   role?: string;
   input: Input[];
-  action: (players: Player[], input: number[]) => Player[] | void;
+  action: (players: Player[], input: (number | boolean)[]) => Player[] | void;
 }
 
 const Roles: any = {
@@ -16,18 +16,20 @@ const Roles: any = {
     description: 'You are a regular Villager. You don’t have any special actions.',
     affiliation: 'Town',
     input: [],
-    action: (players: Player[], input: number[]) => {},
+    action: (players: Player[], input: (number | boolean)[]) => {},
   } as Role,
 
   Mafioso: {
     name: 'Mafioso',
     description: 'Each night you may vote alongside the rest of the mafia on who to kill.',
     affiliation: 'Mafia',
-    input: [Input.Player],
-    action: (players: Player[], input: number[]) => {
+    input: [Input.Player],//, Input.Boolean],
+    action: (players: Player[], input: (number | boolean)[]) => {
       // TODO: deep copy?
       const newPlayers: Player[] = players.slice();
-      newPlayers[input[0]].alive = false;
+      const index: number = typeof input === 'boolean' ? input[0] : 0;
+
+      newPlayers[index].alive = false;
       return newPlayers;
     },
   } as Role,

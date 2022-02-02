@@ -13,7 +13,10 @@ type Props = {
 type State = {
   inputIndex: number;
   players: Player[];
-  selection: string;
+
+  playerInput: (number | boolean)[];
+
+  radioChecked: boolean;
 };
 
 class RoleAction extends React.Component<Props, State> {
@@ -23,40 +26,60 @@ class RoleAction extends React.Component<Props, State> {
     this.state = {
       inputIndex: 0,
       players: this.props.players,
-      selection: '',
+      playerInput: [],
+      radioChecked: false,
     };
 
-    this.radioSelect = this.radioSelect.bind(this);
-    this.performAction = this.performAction.bind(this);
+    this.submitInput = this.submitInput.bind(this);
     this.onDone = this.onDone.bind(this);
   }
 
-  radioSelect(event: React.ChangeEvent) {
-    this.setState({selection: (event.currentTarget as HTMLFormElement).value});
-  }
-
-  performAction(event: React.FormEvent): void {
+  submitInput(event: React.FormEvent): void {
     event.preventDefault();
 
-    let i: number;
-    for (i = 0; i < this.state.players.length; i++) {
-      if (this.state.players[i].name === this.state.selection) {
-        break;
+    const currPlayer: Player = this.props.players[this.props.playerIndex];
+    const currPlayerInput: Input[] = Roles[currPlayer.role].input;
+
+    const rawValue = (event.target as HTMLFormElement).choice.value;
+    let value: number | boolean = 0;
+
+    if (currPlayerInput[this.state.inputIndex] === Input.Boolean) {
+      value = rawValue === 'yes';
+    } else {
+      for (let i = 0; i < this.state.players.length; i++) {
+        if (this.state.players[i].name === rawValue) {
+          value = i;
+        }
       }
     }
 
-    const currPlayer: Player = this.props.players[this.props.playerIndex];
-    const action = Roles[currPlayer.role].action(this.state.players, [i]);
+    if (this.state.inputIndex === currPlayerInput.length - 1) {
+      const action = Roles[currPlayer.role]
+        .action(this.state.players, [...this.state.playerInput, value]);
 
-    if (action !== undefined) {
+      if (action !== undefined) {
+        this.setState({
+          inputIndex: this.state.inputIndex + 1,
+          players: action,
+        });
+
+        return;
+      }
+
       this.setState({
-        inputIndex: this.state.inputIndex + 1,
-        players: action,
+        inputIndex: 0,
+        playerInput: [],
+        radioChecked: false,
       });
+
       return;
     }
 
-    this.setState({inputIndex: this.state.inputIndex + 1});
+    this.setState({
+      inputIndex: this.state.inputIndex + 1,
+      playerInput: [...this.state.playerInput, value],
+      radioChecked: false,
+    });
   }
 
   onDone(): void {
@@ -81,40 +104,49 @@ class RoleAction extends React.Component<Props, State> {
 
       switch (Roles[currPlayer.role].input[this.state.inputIndex]) {
         case Input.Player:
-        let form = [];
-          for (let i = 0; i < this.props.players.length; i++) {
-            const name = this.props.players[i].name;
+        let form: React.ReactElement[] = [];
+          this.props.players.forEach((player, i) => {
+            const name = player.name;
 
             form.push(
-              <div className='form-check d-flex justify-content-center' key={'form' + i}>
-                <input value={name} className='form-check-input' type='radio'
-                  onChange={this.radioSelect} name='choice'
-                  key={'radio' + i} />
-                <label className='form-check-label' htmlFor={name}
-                  key={'label' + i}>{name}</label>
-              </div>
+              <option value={name} key={'option' + i}>{name}</option>
             );
-          }
+          });
 
           actionDisplay = (
-            <form onSubmit={this.performAction}>
-              {form}
+            <form onSubmit={this.submitInput}>
+              <select className='form-select' name='choice'>
+                {form}
+              </select>
               <input className='btn btn-primary' type='submit' value='Done' />
             </form>
           );
+
           break;
 
         case Input.Boolean:
         actionDisplay = (
-          <form onSubmit={this.performAction}>
-            <input value='yes' className='form-check-input' type='radio'
-              onChange={this.radioSelect} name='choice' />
-            <label className='form-check-label' htmlFor='yes'>Yes</label>
-            <input value='no' className='form-check-input' type='radio'
-              onChange={this.radioSelect} name='choice' />
-            <label className='form-check-label' htmlFor='no'>No</label>
+          <form onSubmit={this.submitInput}>
+            <div className='btn-group'>
+              <input className='btn-check' type='radio' value='yes'
+                onChange={() => {this.setState({radioChecked: true})}}
+                name='choice' id='yes' />
 
-            <input className='btn btn-primary' type='submit' value='Done' />
+              <label className='btn btn-outline-primary' htmlFor='yes'>
+                Yes
+              </label>
+
+              <input className='btn-check' type='radio' value='no'
+                onChange={() => {this.setState({radioChecked: true})}}
+                name='choice' id='no'/>
+
+              <label className='btn btn-outline-primary' htmlFor='no'>
+                No
+              </label>
+            </div>
+
+            <input className='btn btn-primary' type='submit' value='Done' 
+              disabled={!this.state.radioChecked} />
           </form>
         );
           break;

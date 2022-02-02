@@ -7,14 +7,30 @@ class AddPlayer extends React.Component {
     this.state = {
       adding: false,
       players: [],
+      validName: false,
     };
 
     this.handleClick = this.handleClick.bind(this);
+    this.validateName = this.validateName.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleClick() {
-    this.setState({adding: true});
+    this.setState({
+      adding: true,
+      validName: false,
+    });
+  }
+
+  validateName(event) {
+    const value = event.target.value;
+
+    if (value.length > 0 && !this.state.players.includes(value)) {
+      this.setState({validName: true});
+      return;
+    }
+
+    this.setState({validName: false});
   }
 
   handleSubmit(event) {
@@ -54,9 +70,11 @@ class AddPlayer extends React.Component {
         {this.state.adding ?
           <form onSubmit={this.handleSubmit}>
             <input id='playerName' className='form-control' type='text'
-              placeholder='Player name' />
+              placeholder='Player name'
+              onChange={this.validateName} />
 
-            <button className='btn btn-primary' type='submit'>
+            <button className='btn btn-primary' type='submit'
+              disabled={!this.state.validName}>
               Add
             </button>
           </form> : null}
