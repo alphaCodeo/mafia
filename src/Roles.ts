@@ -1,6 +1,8 @@
 import Player from './Player';
 import Input from './Input';
 
+import DeepCopy from './DeepCopy';
+
 interface Role {
   name: string;
   description: string;
@@ -24,12 +26,10 @@ const Roles: any = {
     description: 'Each night you may vote alongside the rest of the mafia on who to kill.',
     affiliation: 'Mafia',
     input: [Input.Player],//, Input.Boolean],
-    action: (players: Player[], input: (number | boolean)[]) => {
-      // TODO: deep copy?
-      const newPlayers: Player[] = players.slice();
-      const index: number = typeof input === 'boolean' ? input[0] : 0;
+    action: (players: Player[], input: number[]) => {
+      const newPlayers: Player[] = DeepCopy(players);
 
-      newPlayers[index].alive = false;
+      newPlayers[input[0]].alive = false;
       return newPlayers;
     },
   } as Role,

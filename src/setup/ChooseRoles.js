@@ -51,9 +51,8 @@ class ChooseRoles extends React.Component {
   }
 
   render() {
-    // TODO: format buttons
     const roleList = this.roleNames.map((name, i) => (
-      <div class='col-3'>
+      <div className='d-grid col-4' key={'btn' + i}>
         <input className='btn-check' type='checkbox' id={name}
           onClick={this.onSelect} onChange={this.onSelect}
           key={'input' + i}
@@ -61,7 +60,7 @@ class ChooseRoles extends React.Component {
           disabled={this.state.selected[name] ? false
           : (this.countSelection() >= this.props.players.length)} />
 
-        <label className='btn btn-outline-primary btn-block btn-lg'
+        <label className='btn btn-outline-primary btn-lg'
           htmlFor={name}
           key={'label' + i}>
           {name}
@@ -71,17 +70,17 @@ class ChooseRoles extends React.Component {
 
     return (
       <div className='container'>
-        <div>
+        <div className='my-1'>
           {this.props.players.length} players: {this.props.players.join(', ')}
         </div>
 
         <form onSubmit={this.startGame}>
-          <div className='btn-group row'>
+          <div className='btn-group row my-2'>
             {roleList}
           </div>
 
-          <button className='btn btn-primary btn-lg' type='submit'
-            disabled={!this.countSelection()}>
+          <button className='btn btn-primary btn-lg my-1' type='submit'
+            disabled={this.countSelection() !== this.props.players.length}>
             Start Game
           </button>
         </form>

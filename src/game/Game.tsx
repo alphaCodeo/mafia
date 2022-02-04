@@ -14,6 +14,8 @@ type State = {
   playerIndex: number;
   stage: number;
   night: number;
+  newDeaths: string[];
+  //newDeaths: Player[];
 };
 
 class Game extends React.Component<Props, State> {
@@ -25,6 +27,7 @@ class Game extends React.Component<Props, State> {
       playerIndex: 0,
       stage: 0,
       night: 0,
+      newDeaths: [],
     };
 
     this.onReady = this.onReady.bind(this);
@@ -41,29 +44,29 @@ class Game extends React.Component<Props, State> {
   }
 
   onDone(players?: Player[]) {
-    let newIndex: number;
+    let newState = {} as State;
 
     if (this.state.playerIndex === this.state.players.length - 1) {
-      newIndex = 0;
-    } else{
-      newIndex = this.state.playerIndex + 1;
+      newState.playerIndex = 0;
+      newState.stage = this.state.stage === -1 ? 0 : 2;
+      newState.night = this.state.night + 1;
+    } else {
+      newState.playerIndex = this.state.playerIndex + 1;
+      newState.stage = 0;
     }
 
-    if (players === undefined) {
-      this.setState({
-        playerIndex: newIndex,
-        stage: 0,
-        night: newIndex ? this.state.night : this.state.night + 1,
+    if (players !== undefined) {
+      newState.newDeaths = [];
+      this.state.players.forEach((player, i) => {
+        if (player.alive !== players[i].alive) {
+          newState.newDeaths.push(players[i].name);
+        }
       });
-      return;
+
+      newState.players = players;
     }
 
-    this.setState({
-      players: players,
-      playerIndex: newIndex,
-      stage: 0,
-      night: newIndex ? this.state.night : this.state.night + 1,
-    });
+    this.setState(newState);
   }
 
   render() {
@@ -80,7 +83,7 @@ class Game extends React.Component<Props, State> {
         <div className='container text-center'>
           <div>{currPlayer.name}:</div>
 
-          <button className='btn btn-primary btn-lg'
+          <button className='btn btn-primary btn-lg my-2'
             onClick={this.onReady}>Ready</button>
         </div>
       );
@@ -96,7 +99,7 @@ class Game extends React.Component<Props, State> {
             {Roles[currPlayer.role].description}
           </div>
 
-          <button className='btn btn-primary btn-lg'
+          <button className='btn btn-primary btn-lg my-2'
             onClick={() => {this.onDone()}}>Done</button>
         </div>
       );
@@ -106,6 +109,13 @@ class Game extends React.Component<Props, State> {
         <RoleAction onDone={this.onDone}
           players={this.state.players}
           playerIndex={this.state.playerIndex} />
+      );
+
+      case 2:
+      return (
+        <div className='alert alert-secondary text-center'>
+          {this.state.newDeaths.join(', ')} died last night. Discuss.
+        </div>
       );
 
       default: break;

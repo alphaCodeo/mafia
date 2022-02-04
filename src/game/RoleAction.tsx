@@ -54,8 +54,8 @@ class RoleAction extends React.Component<Props, State> {
     }
 
     if (this.state.inputIndex === currPlayerInput.length - 1) {
-      const action = Roles[currPlayer.role]
-        .action(this.state.players, [...this.state.playerInput, value]);
+      const action = Roles[currPlayer.role].action(this.state.players,
+        [...this.state.playerInput, value]);
 
       if (action !== undefined) {
         this.setState({
@@ -101,24 +101,27 @@ class RoleAction extends React.Component<Props, State> {
     if (!Roles[currPlayer.role].input.length) {
       actionDisplay = <div>You have no actions to perform.</div>;
     } else {
-
       switch (Roles[currPlayer.role].input[this.state.inputIndex]) {
         case Input.Player:
-        let form: React.ReactElement[] = [];
-          this.props.players.forEach((player, i) => {
+        let select: React.ReactElement[] = [];
+          const livePlayers = this.state.players.filter(player => player.alive);
+
+          livePlayers.forEach((player, i) => {
             const name = player.name;
 
-            form.push(
+            select.push(
               <option value={name} key={'option' + i}>{name}</option>
             );
           });
 
           actionDisplay = (
             <form onSubmit={this.submitInput}>
-              <select className='form-select' name='choice'>
-                {form}
+              <select className='form-select my-1' name='choice'>
+                {select}
               </select>
-              <input className='btn btn-primary' type='submit' value='Done' />
+
+              <input className='btn btn-primary my-1' type='submit'
+                value='Done' />
             </form>
           );
 
@@ -127,7 +130,7 @@ class RoleAction extends React.Component<Props, State> {
         case Input.Boolean:
         actionDisplay = (
           <form onSubmit={this.submitInput}>
-            <div className='btn-group'>
+            <div className='btn-group m-1'>
               <input className='btn-check' type='radio' value='yes'
                 onChange={() => {this.setState({radioChecked: true})}}
                 name='choice' id='yes' />
@@ -145,7 +148,7 @@ class RoleAction extends React.Component<Props, State> {
               </label>
             </div>
 
-            <input className='btn btn-primary' type='submit' value='Done' 
+            <input className='btn btn-primary my-1' type='submit' value='Done'
               disabled={!this.state.radioChecked} />
           </form>
         );
@@ -165,7 +168,7 @@ class RoleAction extends React.Component<Props, State> {
 
         {actionDisplay}
 
-        <button className='btn btn-primary btn-lg'
+        <button className='btn btn-primary btn-lg my-1'
           onClick={this.onDone}
           disabled={!(this.state.inputIndex
         >= Roles[currPlayer.role].input.length)}>

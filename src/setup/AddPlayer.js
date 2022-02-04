@@ -55,16 +55,17 @@ class AddPlayer extends React.Component {
 
     return (
       <div className='container text-center'>
-        <button className='btn btn-primary btn-lg'
+        <button className='btn btn-primary btn-lg my-1'
           onClick={this.handleClick}>
           Add Player
         </button>
 
-        <div>
+        <div className='my-1'>
           {this.state.players.length} players:
-        </div>
-        <div className='list-group list-group-horizontal justify-content-center'>
-          {players}
+
+          <div className='list-group list-group-horizontal justify-content-center'>
+            {players}
+          </div>
         </div>
 
         {this.state.adding ?
@@ -73,13 +74,13 @@ class AddPlayer extends React.Component {
               placeholder='Player name'
               onChange={this.validateName} />
 
-            <button className='btn btn-primary' type='submit'
+            <button className='btn btn-primary my-1' type='submit'
               disabled={!this.state.validName}>
               Add
             </button>
           </form> : null}
 
-        <button className='btn btn-primary btn-lg'
+        <button className='btn btn-primary btn-lg my-1'
           onClick={() => this.props.onSubmit(this.state.players)}
           disabled={!this.state.players.length}>
           Choose Roles
