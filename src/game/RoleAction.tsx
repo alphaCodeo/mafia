@@ -104,7 +104,9 @@ class RoleAction extends React.Component<Props, State> {
       switch (Roles[currPlayer.role].input[this.state.inputIndex]) {
         case Input.Player:
         let select: React.ReactElement[] = [];
-          const livePlayers = this.state.players.filter(player => player.alive);
+          const livePlayers = this.state.players
+            .filter(player => player.alive
+              && (player.name !== currPlayer.name));
 
           livePlayers.forEach((player, i) => {
             const name = player.name;

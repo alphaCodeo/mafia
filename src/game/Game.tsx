@@ -32,9 +32,10 @@ class Game extends React.Component<Props, State> {
 
     this.onReady = this.onReady.bind(this);
     this.onDone = this.onDone.bind(this);
+    this.nightSummary = this.nightSummary.bind(this);
   }
 
-  onReady() {
+  onReady(): void {
     if (!this.state.night) {
       this.setState({stage: -1});
       return;
@@ -43,12 +44,17 @@ class Game extends React.Component<Props, State> {
     this.setState({stage: 1});
   }
 
-  onDone(players?: Player[]) {
+  onDone(players?: Player[]): void {
     let newState = {} as State;
+
+    if (this.state.stage === 2) {
+      this.setState({stage: 0});
+      return;
+    }
 
     if (this.state.playerIndex === this.state.players.length - 1) {
       newState.playerIndex = 0;
-      newState.stage = this.state.stage === -1 ? 0 : 2;
+      newState.stage = (this.state.stage === -1) ? 0 : 2;
       newState.night = this.state.night + 1;
     } else {
       newState.playerIndex = this.state.playerIndex + 1;
@@ -69,11 +75,42 @@ class Game extends React.Component<Props, State> {
     this.setState(newState);
   }
 
+  nightSummary(): React.ReactElement {
+    const livePlayers = this.state.players.filter(player => player.alive);
+    const sameAffil = livePlayers.filter(player => (
+      Roles[player.role].affiliation === Roles[livePlayers[0].role].affiliation
+    ));
+
+    if (sameAffil.length === livePlayers.length) {
+      return (
+        <div className='alert alert-secondary text-center'>
+          The {Roles[livePlayers[0].role].affiliation} wins.
+        </div>
+      );
+    }
+
+    return (
+      <div className='container text-center'>
+        <div>
+          End of night {this.state.night}:
+        </div>
+
+        <div className='alert alert-secondary my-1'>
+          {this.state.newDeaths.length ? this.state.newDeaths.join(', ')
+            : 'No one'} died last night. Discuss.
+          </div>
+
+          <button className='btn btn-primary btn-lg my-1'
+            onClick={() => {this.onDone()}}>Done</button>
+        </div>
+      );
+  }
+
   render() {
     // TODO: shuffle order and implement role priorities
     const currPlayer: Player = this.state.players[this.state.playerIndex];
 
-    if (!currPlayer.alive) {
+    if (this.state.stage !== 2 && !currPlayer.alive) {
       this.onDone();
     }
 
@@ -109,14 +146,10 @@ class Game extends React.Component<Props, State> {
         <RoleAction onDone={this.onDone}
           players={this.state.players}
           playerIndex={this.state.playerIndex} />
-      );
+        );
 
       case 2:
-      return (
-        <div className='alert alert-secondary text-center'>
-          {this.state.newDeaths.join(', ')} died last night. Discuss.
-        </div>
-      );
+      return this.nightSummary();
 
       default: break;
     }
