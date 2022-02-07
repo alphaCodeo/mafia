@@ -40,7 +40,11 @@ class App extends React.Component<Props, State> {
       name: 'maf',
       role: 'Mafioso',
       alive: true,
-    } as Player]} />;*/
+    } as Player, {
+      name: 'sher',
+      role: 'Sheriff',
+      alive: true,
+    }]} />;*/
     switch (this.state.stage) {
       case 0:
       return (

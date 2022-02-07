@@ -1,32 +1,39 @@
 import React from 'react';
 
+import NameHeader from './NameHeader';
+
 import Roles from '../Roles';
 import Player from '../Player';
 import Input from '../Input';
 
 type Props = {
-  onDone: (players?: Player[]) => void;
   players: Player[];
+  newPlayers: Player[];
+
   playerIndex: number;
+
+  onDone: (players: Player[]) => void;
 };
 
 type State = {
-  inputIndex: number;
-  players: Player[];
+  newPlayers: Player[];
 
   playerInput: (number | boolean)[];
 
+  inputIndex: number;
   radioChecked: boolean;
 };
 
-class RoleAction extends React.Component<Props, State> {
+class PlayerAction extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
     this.state = {
-      inputIndex: 0,
-      players: this.props.players,
+      newPlayers: this.props.newPlayers,
+
       playerInput: [],
+
+      inputIndex: 0,
       radioChecked: false,
     };
 
@@ -46,28 +53,29 @@ class RoleAction extends React.Component<Props, State> {
     if (currPlayerInput[this.state.inputIndex] === Input.Boolean) {
       value = rawValue === 'yes';
     } else {
-      for (let i = 0; i < this.state.players.length; i++) {
-        if (this.state.players[i].name === rawValue) {
+      for (let i = 0; i < this.props.players.length; i++) {
+        if (this.props.players[i].name === rawValue) {
           value = i;
         }
       }
     }
 
     if (this.state.inputIndex === currPlayerInput.length - 1) {
-      const action = Roles[currPlayer.role].action(this.state.players,
+      const action = Roles[currPlayer.role].action(this.state.newPlayers,
         [...this.state.playerInput, value]);
 
       if (action !== undefined) {
         this.setState({
           inputIndex: this.state.inputIndex + 1,
-          players: action,
+          newPlayers: action,
         });
 
         return;
       }
 
       this.setState({
-        inputIndex: 0,
+        inputIndex: this.state.inputIndex + 1,
+        //inputIndex: 0,
         playerInput: [],
         radioChecked: false,
       });
@@ -83,14 +91,14 @@ class RoleAction extends React.Component<Props, State> {
   }
 
   onDone(): void {
-    const currPlayer: Player = this.props.players[this.props.playerIndex];
+    //const currPlayer: Player = this.props.players[this.props.playerIndex];
 
-    if (!Roles[currPlayer.role].input.length) {
+    /*if (!Roles[currPlayer.role].input.length) {
       this.props.onDone();
       return;
-    }
+    }*/
 
-    this.props.onDone(this.state.players);
+    this.props.onDone(this.state.newPlayers);
   }
 
   render() {
@@ -104,7 +112,7 @@ class RoleAction extends React.Component<Props, State> {
       switch (Roles[currPlayer.role].input[this.state.inputIndex]) {
         case Input.Player:
         let select: React.ReactElement[] = [];
-          const livePlayers = this.state.players
+          const livePlayers = this.props.players
             .filter(player => player.alive
               && (player.name !== currPlayer.name));
 
@@ -164,10 +172,16 @@ class RoleAction extends React.Component<Props, State> {
       }
     }
 
+    const prompt = Roles[currPlayer.role].prompt ?
+    ( <div className='my-1'>
+        {Roles[currPlayer.role].prompt[this.state.inputIndex]}
+      </div> ) : '';
+
     return (
       <div className='container text-center'>
-        <div>{currPlayer.name}:</div>
+        <NameHeader player={currPlayer} />
 
+        {prompt}
         {actionDisplay}
 
         <button className='btn btn-primary btn-lg my-1'
@@ -181,4 +195,4 @@ class RoleAction extends React.Component<Props, State> {
   }
 }
 
-export default RoleAction;
+export default PlayerAction;

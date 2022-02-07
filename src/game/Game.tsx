@@ -1,9 +1,11 @@
 import React from 'react';
 
-import RoleAction from './RoleAction';
-import Player from '../Player';
+import PlayerAction from './PlayerAction';
+import RoleDescription from './RoleDescription';
+import ConfirmReady from './ConfirmReady';
+import NightSummary from './NightSummary';
 
-import Roles from '../Roles';
+import Player from '../Player';
 
 type Props = {
   players: Player[];
@@ -11,11 +13,11 @@ type Props = {
 
 type State = {
   players: Player[];
-  playerIndex: number;
-  stage: number;
+  newPlayers: Player[];
+
   night: number;
-  newDeaths: string[];
-  //newDeaths: Player[];
+  stage: number;
+  playerIndex: number;
 };
 
 class Game extends React.Component<Props, State> {
@@ -24,132 +26,101 @@ class Game extends React.Component<Props, State> {
 
     this.state = {
       players: this.props.players,
-      playerIndex: 0,
-      stage: 0,
+      newPlayers: this.props.players,
+
       night: 0,
-      newDeaths: [],
+      stage: 0,
+      playerIndex: 0,
     };
 
     this.onReady = this.onReady.bind(this);
-    this.onDone = this.onDone.bind(this);
-    this.nightSummary = this.nightSummary.bind(this);
+    this.onDescriptionDone = this.onDescriptionDone.bind(this);
+    this.onActionDone = this.onActionDone.bind(this);
+    this.onSummaryDone = this.onSummaryDone.bind(this);
   }
 
   onReady(): void {
-    if (!this.state.night) {
-      this.setState({stage: -1});
-      return;
-    }
-
-    this.setState({stage: 1});
+    this.setState({stage: this.state.night ? 1 : -1});
   }
 
-  onDone(players?: Player[]): void {
-    let newState = {} as State;
+  onDescriptionDone(): void {
+    const lastPlayer = (this.state.playerIndex
+      === this.state.players.length - 1);
 
-    if (this.state.stage === 2) {
-      this.setState({stage: 0});
-      return;
-    }
+    this.setState({
+      playerIndex: lastPlayer ? 0 : this.state.playerIndex + 1,
 
-    if (this.state.playerIndex === this.state.players.length - 1) {
-      newState.playerIndex = 0;
-      newState.stage = (this.state.stage === -1) ? 0 : 2;
-      newState.night = this.state.night + 1;
-    } else {
-      newState.playerIndex = this.state.playerIndex + 1;
-      newState.stage = 0;
-    }
+      night: lastPlayer ? this.state.night + 1 : this.state.night,
+      stage: 0,
+    });
+  }
 
-    if (players !== undefined) {
-      newState.newDeaths = [];
-      this.state.players.forEach((player, i) => {
-        if (player.alive !== players[i].alive) {
-          newState.newDeaths.push(players[i].name);
-        }
+  onActionDone(newPlayers: Player[]): void {
+    const lastPlayer = (this.state.playerIndex
+      === this.state.players.length - 1);
+
+    if (lastPlayer) {
+      this.setState({
+        newPlayers: newPlayers,
+
+        stage: 2,
+        playerIndex: 0,
       });
+    } else {
+      this.setState({
+        newPlayers: newPlayers,
 
-      newState.players = players;
+        stage: 0,
+        playerIndex: this.state.playerIndex + 1,
+      });
     }
-
-    this.setState(newState);
   }
 
-  nightSummary(): React.ReactElement {
-    const livePlayers = this.state.players.filter(player => player.alive);
-    const sameAffil = livePlayers.filter(player => (
-      Roles[player.role].affiliation === Roles[livePlayers[0].role].affiliation
-    ));
+  onSummaryDone() {
+    this.setState({
+      players: this.state.newPlayers,
 
-    if (sameAffil.length === livePlayers.length) {
-      return (
-        <div className='alert alert-secondary text-center'>
-          The {Roles[livePlayers[0].role].affiliation} wins.
-        </div>
-      );
-    }
-
-    return (
-      <div className='container text-center'>
-        <div>
-          End of night {this.state.night}:
-        </div>
-
-        <div className='alert alert-secondary my-1'>
-          {this.state.newDeaths.length ? this.state.newDeaths.join(', ')
-            : 'No one'} died last night. Discuss.
-          </div>
-
-          <button className='btn btn-primary btn-lg my-1'
-            onClick={() => {this.onDone()}}>Done</button>
-        </div>
-      );
+      night: this.state.night + 1,
+      stage: 0,
+    });
   }
 
   render() {
     // TODO: shuffle order and implement role priorities
     const currPlayer: Player = this.state.players[this.state.playerIndex];
 
-    if (this.state.stage !== 2 && !currPlayer.alive) {
-      this.onDone();
-    }
-
     switch (this.state.stage) {
       case 0:
-      return (
-        <div className='container text-center'>
-          <div>{currPlayer.name}:</div>
+      if (!currPlayer.alive) {
+        this.onActionDone(this.state.players);
+      }
 
-          <button className='btn btn-primary btn-lg my-2'
-            onClick={this.onReady}>Ready</button>
-        </div>
-      );
+      return (
+        <ConfirmReady player={currPlayer}
+          onReady={this.onReady} />
+        );
 
       case -1:
       return (
-        <div className='container text-center'>
-          <div>{currPlayer.name}:</div>
-          <div>
-            You are the {currPlayer.role}.
-          </div>
-          <div>
-            {Roles[currPlayer.role].description}
-          </div>
-
-          <button className='btn btn-primary btn-lg my-2'
-            onClick={() => {this.onDone()}}>Done</button>
-        </div>
-      );
+        <RoleDescription player={currPlayer}
+          onDone={this.onDescriptionDone} />
+        );
 
       case 1:
       return (
-        <RoleAction onDone={this.onDone}
+        <PlayerAction onDone={this.onActionDone}
           players={this.state.players}
+          newPlayers={this.state.newPlayers}
           playerIndex={this.state.playerIndex} />
         );
 
       case 2:
-      return this.nightSummary();
+      return (
+        <NightSummary players={this.state.players}
+          night={this.state.night}
+          newPlayers={this.state.newPlayers}
+          onDone={this.onSummaryDone}/>
+      );
 
       default: break;
     }

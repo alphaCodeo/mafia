@@ -8,8 +8,13 @@ interface Role {
   description: string;
   affiliation: string;
   role?: string;
+  prompt?: string[];
   input: Input[];
-  action: (players: Player[], input: (number | boolean)[]) => Player[] | void;
+  action: (players: Player[], input: (number | boolean)[]) => any;//Player[] | void;
+}
+
+interface Investigative extends Role {
+  action: (players: Player[], input: (number | boolean)[]) => boolean;
 }
 
 const Roles: any = {
@@ -25,7 +30,8 @@ const Roles: any = {
     name: 'Mafioso',
     description: 'Each night you may vote alongside the rest of the mafia on who to kill.',
     affiliation: 'Mafia',
-    input: [Input.Player],//, Input.Boolean],
+    prompt: ['Choose a player to kill.'],
+    input: [Input.Player],
     action: (players: Player[], input: number[]) => {
       const newPlayers: Player[] = DeepCopy(players);
 
@@ -38,6 +44,9 @@ const Roles: any = {
     name: 'Sheriff',
     description: 'Once per night you may check a player to determine whether they are suspicious.',
     affiliation: 'Town',
+    input: [Input.Player],
+    action: (players: Player[], input: number[]) => {
+    },
   } as Role,
 
   Investigator: {
