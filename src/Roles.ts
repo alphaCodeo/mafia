@@ -8,13 +8,17 @@ interface Role {
   description: string;
   affiliation: string;
   role?: string;
+
   prompt?: string[];
   input: Input[];
-  action: (players: Player[], input: (number | boolean)[]) => any;//Player[] | void;
+  action: (players: Player[], input: (number | boolean)[]) => any;
+  //Player[] | void;
 }
 
 interface Investigative extends Role {
   action: (players: Player[], input: (number | boolean)[]) => boolean;
+  displayTrue: string;
+  displayFalse: string;
 }
 
 const Roles: any = {
@@ -22,6 +26,7 @@ const Roles: any = {
     name: 'Villager',
     description: 'You are a regular Villager. You don’t have any special actions.',
     affiliation: 'Town',
+
     input: [],
     action: (players: Player[], input: (number | boolean)[]) => {},
   } as Role,
@@ -30,6 +35,7 @@ const Roles: any = {
     name: 'Mafioso',
     description: 'Each night you may vote alongside the rest of the mafia on who to kill.',
     affiliation: 'Mafia',
+
     prompt: ['Choose a player to kill.'],
     input: [Input.Player],
     action: (players: Player[], input: number[]) => {
@@ -44,10 +50,16 @@ const Roles: any = {
     name: 'Sheriff',
     description: 'Once per night you may check a player to determine whether they are suspicious.',
     affiliation: 'Town',
+
+    prompt: ['Choose a player to investigate.'],
     input: [Input.Player],
     action: (players: Player[], input: number[]) => {
+      return Roles[players[input[0]].role].affiliation === 'Mafia';
     },
-  } as Role,
+
+    displayTrue: '%playerName is Suspicious.',
+    displayFalse: '%playerName is Not Suspicious.',
+  } as Investigative,
 
   Investigator: {
     name: 'Investigator',

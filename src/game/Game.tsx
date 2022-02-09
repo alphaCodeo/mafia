@@ -55,25 +55,29 @@ class Game extends React.Component<Props, State> {
     });
   }
 
-  onActionDone(newPlayers: Player[]): void {
+  onActionDone(newPlayers?: Player[]): void {
     const lastPlayer = (this.state.playerIndex
       === this.state.players.length - 1);
 
-    if (lastPlayer) {
-      this.setState({
-        newPlayers: newPlayers,
+    let newState = {} as State;
 
+    if (lastPlayer) {
+      newState = {
         stage: 2,
         playerIndex: 0,
-      });
+      } as State;
     } else {
-      this.setState({
-        newPlayers: newPlayers,
-
+      newState = {
         stage: 0,
         playerIndex: this.state.playerIndex + 1,
-      });
+      } as State;
     }
+
+    if (newPlayers !== undefined) {
+      newState.newPlayers = newPlayers;
+    }
+
+    this.setState(newState);
   }
 
   onSummaryDone() {
@@ -108,10 +112,10 @@ class Game extends React.Component<Props, State> {
 
       case 1:
       return (
-        <PlayerAction onDone={this.onActionDone}
-          players={this.state.players}
+        <PlayerAction players={this.state.players}
           newPlayers={this.state.newPlayers}
-          playerIndex={this.state.playerIndex} />
+          playerIndex={this.state.playerIndex}
+          onDone={this.onActionDone} />
         );
 
       case 2:

@@ -12,11 +12,13 @@ type Props = {
 
   playerIndex: number;
 
-  onDone: (players: Player[]) => void;
+  onDone: (newPlayers?: Player[]) => void;
 };
 
 type State = {
   newPlayers: Player[];
+
+  actionResult: boolean | string;
 
   playerInput: (number | boolean)[];
 
@@ -29,7 +31,10 @@ class PlayerAction extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      newPlayers: this.props.newPlayers,
+      //newPlayers: this.props.newPlayers,
+      newPlayers: [],
+
+      actionResult: '',
 
       playerInput: [],
 
@@ -61,10 +66,17 @@ class PlayerAction extends React.Component<Props, State> {
     }
 
     if (this.state.inputIndex === currPlayerInput.length - 1) {
-      const action = Roles[currPlayer.role].action(this.state.newPlayers,
+      const action = Roles[currPlayer.role].action(this.props.newPlayers,
         [...this.state.playerInput, value]);
 
-      if (action !== undefined) {
+      if (typeof action === 'boolean') {
+        this.setState({
+          inputIndex: this.state.inputIndex + 1,
+          actionResult: action,
+        });
+
+        return;
+      } else if (Array.isArray(action)) {
         this.setState({
           inputIndex: this.state.inputIndex + 1,
           newPlayers: action,
@@ -93,12 +105,12 @@ class PlayerAction extends React.Component<Props, State> {
   onDone(): void {
     //const currPlayer: Player = this.props.players[this.props.playerIndex];
 
-    /*if (!Roles[currPlayer.role].input.length) {
-      this.props.onDone();
+    if (this.state.newPlayers.length) {
+      this.props.onDone(this.state.newPlayers);
       return;
-    }*/
+    }
 
-    this.props.onDone(this.state.newPlayers);
+    this.props.onDone();
   }
 
   render() {
@@ -166,6 +178,20 @@ class PlayerAction extends React.Component<Props, State> {
 
         case undefined:
         actionDisplay = <div>You have finished your actions.</div>;
+          // Investigative
+          if ('displayTrue' in Roles[currPlayer.role]) {
+            let display: string = this.state.actionResult
+              ? Roles[currPlayer.role].displayTrue
+              : Roles[currPlayer.role].displayFalse;
+
+            display = display.replace('%playerName', currPlayer.name);
+
+            actionDisplay = (
+              <div>
+                {display}
+              </div>
+            );
+          }
           break;
 
         default: break;
@@ -175,7 +201,7 @@ class PlayerAction extends React.Component<Props, State> {
     const prompt = Roles[currPlayer.role].prompt ?
     ( <div className='my-1'>
         {Roles[currPlayer.role].prompt[this.state.inputIndex]}
-      </div> ) : '';
+      </div> ) : null;
 
     return (
       <div className='container text-center'>
