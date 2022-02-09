@@ -71,24 +71,26 @@ class PlayerAction extends React.Component<Props, State> {
 
       if (typeof action === 'boolean') {
         this.setState({
-          inputIndex: this.state.inputIndex + 1,
+          playerInput: [value],
           actionResult: action,
+          inputIndex: this.state.inputIndex + 1,
         });
 
         return;
       } else if (Array.isArray(action)) {
         this.setState({
-          inputIndex: this.state.inputIndex + 1,
           newPlayers: action,
+          playerInput: [value],
+          inputIndex: this.state.inputIndex + 1,
         });
 
         return;
       }
 
       this.setState({
+        playerInput: [value],
+
         inputIndex: this.state.inputIndex + 1,
-        //inputIndex: 0,
-        playerInput: [],
         radioChecked: false,
       });
 
@@ -96,8 +98,9 @@ class PlayerAction extends React.Component<Props, State> {
     }
 
     this.setState({
-      inputIndex: this.state.inputIndex + 1,
       playerInput: [...this.state.playerInput, value],
+
+      inputIndex: this.state.inputIndex + 1,
       radioChecked: false,
     });
   }
@@ -184,7 +187,10 @@ class PlayerAction extends React.Component<Props, State> {
               ? Roles[currPlayer.role].displayTrue
               : Roles[currPlayer.role].displayFalse;
 
-            display = display.replace('%playerName', currPlayer.name);
+            if (typeof this.state.playerInput[0] === 'number') {
+              display = display.replace('%playerName',
+                this.props.players[this.state.playerInput[0]].name);
+            }
 
             actionDisplay = (
               <div>
